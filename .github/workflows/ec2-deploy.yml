@@ -1,0 +1,12 @@
+name: ec2-deploy
+run-name: ${{ github.actor }} is deploying an EC2 instance!
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  ec2-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello World
+        run: echo "Hello World!"

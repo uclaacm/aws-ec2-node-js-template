@@ -1,12 +1,50 @@
 name: ec2-deploy
 run-name: ${{ github.actor }} is deploying an EC2 instance!
+# Trigger deployment only on push on main
 on:
   push:
     branches:
       - "main"
 jobs:
   ec2-deploy:
+    name: Deploy to EC2 on main push
     runs-on: ubuntu-latest
     steps:
-      - name: Hello World
-        run: echo "Hello World!"
+      - name: Checkout code
+        run: actions/checkout@v2
+
+      - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: us-west-1
+
+        - name: Upload key pair
+          uses: actions/upload-artifact@v2
+          with:
+            name: key
+            path: /path/to/private-key.pem
+
+        - name: Create EC2 instance
+          uses: aws-actions/aws-cli@v1
+          with:
+            args: ec2 run-instances --image-id ami-1234567890 --instance-type t2.micro --key-name my-key-pair
+
+        - name: Download key pair
+          uses: actions/download-artifact@v2
+          with:
+            name: key
+            path: /path/to/private-key.pem
+
+        - name: Set file permissions on key
+          run: chmod 400 /path/to/private-key.pem
+
+        - name: SSH into EC2 instance
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.EC2_HOST }}
+            username: ec2-user
+            key: /path/to/private-key.pem
+            script: |
+              echo "Connected to EC2 instance"

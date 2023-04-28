@@ -15,15 +15,19 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-1
-      - name: deploy to EC2
-        run: aws ec2 run-instances --image-id ami-014d05e6b24240371 --count 1 --instance-type t3.micro --key-name MyKeyPair --security-group-ids sg-090d47e54ab917a32 --subnet-id subnet-0ead7a19b74d12686 --block-device-mappings "[{\"DeviceName\":\"/dev/sdf\",\"Ebs\":{\"VolumeSize\":30,\"DeleteOnTermination\":false}}]" --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=demo-server}]' 'ResourceType=volume,Tags=[{Key=Name,Value=demo-server-disk}]'
       - name: Load in repo files, including config.json
         run: |
           git config --local user.email ${{ secrets.AWS_SERVICE_EMAIL }}
           git config --local user.name ${{ secrets.AWS_SERVICE_USERNAME }}
           git pull
       - name: Process config.json
-        run: cat config.json | jq -r .access_key
+        run: |
+          vpc_id = cat config.json | jq -r .vpc_id
+      - name: Create security group
+        run: aws ec2 create-security-group --group-name testing-group --description "My security group" --vpc-id $(vpc_id)
+      - name: deploy to EC2
+        run: aws ec2 run-instances --image-id ami-014d05e6b24240371 --count 1 --instance-type t3.micro --key-name MyKeyPair --security-group-ids sg-090d47e54ab917a32 --subnet-id subnet-0ead7a19b74d12686 --block-device-mappings "[{\"DeviceName\":\"/dev/sdf\",\"Ebs\":{\"VolumeSize\":30,\"DeleteOnTermination\":false}}]" --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=demo-server}]' 'ResourceType=volume,Tags=[{Key=Name,Value=demo-server-disk}]'
+
 
 # name: ec2-update
 # run-name: ${{ github.actor }} is deploying an EC2 instance!

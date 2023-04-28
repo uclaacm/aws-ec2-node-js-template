@@ -19,10 +19,11 @@ jobs:
         run: |
           git config --local user.email ${{ secrets.AWS_SERVICE_EMAIL }}
           git config --local user.name ${{ secrets.AWS_SERVICE_USERNAME }}
+          git checkout update
           git pull
       - name: Process config.json
         run: |
-          vpc_id = cat config.json | jq -r .vpc_id
+          vpc_id=cat config.json | jq -r .vpc_id
           echo $vpc_id
       - name: Create security group
         run: aws ec2 create-security-group --group-name testing-group --description "My security group" --vpc-id $vpc_id

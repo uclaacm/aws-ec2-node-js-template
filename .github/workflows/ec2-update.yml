@@ -18,4 +18,4 @@ jobs:
       # - run: ls
       - name: Zip all files so that we can upload it to EC2, later on we can ignore certain files
         run: zip all_files *
-      - name: Deploy to EC2 using AWS-CLI
+      # - name: Deploy to EC2 using AWS-CLI

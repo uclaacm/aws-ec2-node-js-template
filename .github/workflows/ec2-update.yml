@@ -1,6 +1,6 @@
 name: ec2-update
 run-name: ${{ github.actor }} is deploying an EC2 instance!
-on: workflow_dispatch
+on: deploy-changes
   # push:
   #   branches:
   #     - "main"

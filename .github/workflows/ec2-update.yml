@@ -1,9 +1,10 @@
 name: ec2-update
 run-name: ${{ github.actor }} is deploying an EC2 instance!
-on: 
+# Trigger deployment only on push on [xxx]
+on:
   push:
-  branches: 
-    - deploy-changes
+    branches:
+      - "deploy-changes"
 jobs:
   ec2-update:
     runs-on: ubuntu-latest

@@ -1,12 +1,12 @@
 name: ec2-update
 run-name: ${{ github.actor }} is deploying an EC2 instance!
-# Trigger deployment only on push on [xxx]
+# Trigger deployment & update only on push on [xxx]
 on:
   push:
     branches:
       - "deploy-changes"
 jobs:
-  ec2-update:
+  ec2-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

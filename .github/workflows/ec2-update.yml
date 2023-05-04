@@ -25,7 +25,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           port: 22 #apparently this is the default?
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          command: whoami
+          script: whoami
                   #what comes here is whatever command we want to run on remote instance after ssh connection
 
 
